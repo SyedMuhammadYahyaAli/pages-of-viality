@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Form</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .scrollable { max-height: 200px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Signup Form</h2>
+    <form id="signupForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" required maxlength="26" placeholder="Enter your name">
+        </div>
+
+        <div class="form-group">
+            <label for="dob">Date of Birth:</label>
+            <input type="date" class="form-control" id="dob" required>
+        </div>
+
+        <div class="form-group">
+            <label for="age">Age:</label>
+            <input type="number" class="form-control" id="age" readonly>
+            <small id="ageHelp" class="form-text text-muted">Automatically calculated from your date of birth.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="height">Height (in cm):</label>
+            <input type="number" class="form-control" id="height" required min="30.48" max="243.84" placeholder="Enter height in cm">
+        </div>
+
+        <div class="form-group">
+            <label for="weight">Current Weight (in kg):</label>
+            <input type="number" class="form-control" id="weight" required min="20" max="600" placeholder="Enter weight in kg">
+        </div>
+
+        <div class="form-group">
+            <label for="bmi">BMI:</label>
+            <input type="text" class="form-control" id="bmi" readonly>
+            <small id="bmiHelp" class="form-text text-muted">Automatically calculated from weight and height.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="medicalCondition">Medical Condition:</label>
+            <select class="form-control" id="medicalCondition" required>
+                <option value="" disabled selected>Select your condition</option>
+                <option value="none">None</option>
+                <option value="backPain">Back Pain</option>
+                <option value="heartPain">Heart Pain</option>
+                <option value="headache">Headache</option>
+                <option value="armPain">Arm Pain</option>
+                <option value="legPain">Leg Pain</option>
+                <option value="highBloodPressure">High Blood Pressure</option>
+                <option value="diabetes">Diabetes</option>
+                <option value="jointPain">Joint Pain</option>
+                <option value="nerveDamage">Nerve Damage</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="conditionDetails" style="display:none;">
+            <label>Possible Conditions:</label>
+            <div class="scrollable">
+                <ul class="list-group" id="conditionList">
+                    <!-- Dynamic list will be populated here -->
+                </ul>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<script>
+    // Calculate age based on date of birth
+    document.getElementById('dob').addEventListener('change', function() {
+        const dob = new Date(this.value);
+        const age = new Date().getFullYear() - dob.getFullYear();
+        document.getElementById('age').value = age < 0 ? 0 : age;
+    });
+
+    // Calculate BMI in real time
+    $('#weight, #height').on('input', function() {
+        const weight = parseFloat($('#weight').val());
+        const height = parseFloat($('#height').val()) / 100; // convert cm to meters
+
+        if (weight && height) {
+            const bmi = (weight / (height * height)).toFixed(2);
+            $('#bmi').val(bmi);
+        } else {
+            $('#bmi').val('');
+        }
+    });
+
+    // Show corresponding medical conditions based on selection
+    $('#medicalCondition').change(function() {
+        const condition = $(this).val();
+        const conditionList = $('#conditionList');
+        conditionList.empty(); // Clear previous options
+        $('#conditionDetails').hide(); // Hide details initially
+
+        const conditions = {
+            'backPain': ['Herniated Disc', 'Sciatica', 'Scoliosis', 'Muscle Strain'],
+            'heartPain': ['Angina', 'Myocardial Infarction', 'Arrhythmia'],
+            'headache': ['Migraine', 'Tension Headache', 'Cluster Headache'],
+            'armPain': ['Tendinitis', 'Carpal Tunnel Syndrome', 'Rotator Cuff Injury'],
+            'legPain': ['Nerve Damage', 'Bone Fracture', 'Muscle Strain', 'Shin Splints'],
+            'highBloodPressure': ['Hypertension', 'Heart Disease', 'Stroke Risk'],
+            'diabetes': ['Type 1 Diabetes', 'Type 2 Diabetes', 'Gestational Diabetes'],
+            'jointPain': ['Osteoarthritis', 'Rheumatoid Arthritis', 'Gout'],
+            'nerveDamage': ['Peripheral Neuropathy', 'Sciatica', 'Compression Syndromes'],
+            'other': ['Consult a Physician', 'General Fatigue', 'Allergies']
+        };
+
+        if (conditions[condition]) {
+            conditions[condition].forEach(item => {
+                conditionList.append(`<li class="list-group-item">${item}</li>`);
+            });
+            $('#conditionDetails').show();
+        }
+    });
+
+    // Form submission handling
+    $('#signupForm').submit(function(event) {
+        event.preventDefault();
+        alert('Form submitted successfully!');
+        // Here, you can handle form submission, e.g., send data to your server
+    });
+</script>
+
+</body>
+</html>
